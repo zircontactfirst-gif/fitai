@@ -43,13 +43,17 @@ type DeepResult = {
   overall_score?: number;
   expert_verdict_bn?: string;
   expert_verdict_en?: string;
-  
   // Advanced Accuracy Metrics
   fabric_composition?: string;
   stretch_factor?: "low" | "medium" | "high";
   cut_style?: string;
   shrinkage_risk?: "low" | "high";
   waist_fastening?: "elastic" | "button" | "drawstring" | "unknown";
+  
+  // Master Tailor Additions
+  alteration_complexity?: "low" | "medium" | "high" | "impossible";
+  tension_lines?: string[];
+  durability_score?: number;
 };
 
 function ResultPage() {
@@ -313,17 +317,42 @@ function ExpertResultView({ r, onSave }: { r: DeepResult; onSave: () => void }) 
 
         <TabsContent value="verdict" className="space-y-3 pt-4">
           {r.expert_verdict_bn && (
-            <Card><CardContent className="py-4">
-              <p className="mb-1 text-xs font-semibold text-muted-foreground">বিশেষজ্ঞ মতামত (Bangla)</p>
+            <Card className="border-primary/50 bg-primary/5"><CardContent className="py-4">
+              <p className="mb-1 text-xs font-semibold text-primary">বিশেষজ্ঞ মতামত (Master Tailor Verdict)</p>
               <p className="text-sm leading-relaxed">{r.expert_verdict_bn}</p>
             </CardContent></Card>
           )}
           {r.expert_verdict_en && (
-            <Card><CardContent className="py-4">
-              <p className="mb-1 text-xs font-semibold text-muted-foreground">Expert verdict (English)</p>
+            <Card className="border-primary/50 bg-primary/5"><CardContent className="py-4">
+              <p className="mb-1 text-xs font-semibold text-primary">Expert Verdict (English)</p>
               <p className="text-sm leading-relaxed">{r.expert_verdict_en}</p>
             </CardContent></Card>
           )}
+
+          {(r.alteration_complexity || (r.tension_lines && r.tension_lines.length > 0)) && (
+            <Card>
+              <CardContent className="py-4 space-y-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-1"><Sparkles className="h-3 w-3" /> Tailor's Assessment</p>
+                {r.alteration_complexity && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span>Alteration Complexity:</span>
+                    <Badge variant={r.alteration_complexity === "impossible" || r.alteration_complexity === "high" ? "destructive" : r.alteration_complexity === "medium" ? "secondary" : "outline"}>
+                      {r.alteration_complexity}
+                    </Badge>
+                  </div>
+                )}
+                {r.tension_lines && r.tension_lines.length > 0 && (
+                  <div className="space-y-1">
+                    <span className="text-sm">Identified Tension Lines:</span>
+                    <ul className="list-disc pl-5 text-sm text-muted-foreground">
+                      {r.tension_lines.map((t, i) => <li key={i}>{t}</li>)}
+                    </ul>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
           {r.visual_preview && (
             <Card><CardContent className="py-4">
               <p className="mb-1 text-xs font-semibold text-muted-foreground">How it will look on you</p>
@@ -389,9 +418,10 @@ function ExpertResultView({ r, onSave }: { r: DeepResult; onSave: () => void }) 
             <Card>
               <CardContent className="py-4 space-y-2 text-sm">
                 {r.fabric_composition && <p><span className="text-xs font-semibold text-muted-foreground">Fabric: </span>{r.fabric_composition}</p>}
-                {r.stretch_factor && <p><span className="text-xs font-semibold text-muted-foreground">Stretch: </span><Badge variant="outline">{r.stretch_factor}</Badge></p>}
-                {r.cut_style && <p><span className="text-xs font-semibold text-muted-foreground">Cut/Style: </span>{r.cut_style}</p>}
-                {r.shrinkage_risk === "high" && <p><span className="text-xs font-semibold text-destructive">Shrinkage Risk: </span>High - Consider sizing up</p>}
+                {r.stretch_factor && <p className="flex justify-between items-center"><span className="text-xs font-semibold text-muted-foreground">Stretch: </span><Badge variant="outline">{r.stretch_factor}</Badge></p>}
+                {r.cut_style && <p className="flex justify-between items-center"><span className="text-xs font-semibold text-muted-foreground">Cut/Style: </span><span>{r.cut_style}</span></p>}
+                {r.shrinkage_risk === "high" && <p className="flex justify-between items-center"><span className="text-xs font-semibold text-destructive">Shrinkage Risk: </span><span>High - Consider sizing up</span></p>}
+                {r.durability_score !== undefined && <p className="flex justify-between items-center"><span className="text-xs font-semibold text-muted-foreground">Durability Score: </span><span className={r.durability_score >= 70 ? "text-green-600 font-medium" : "text-amber-600 font-medium"}>{r.durability_score}/100</span></p>}
               </CardContent>
             </Card>
           )}
@@ -525,7 +555,11 @@ Return STRICT JSON ONLY (no markdown, no prose) matching this schema:
   "alternative_suggestion": "if fit is poor, what to look for instead",
   "return_likelihood": "very low|low|medium|high",
   "overall_score": 0,
+  "alteration_complexity": "low|medium|high|impossible",
+  "tension_lines": ["e.g. X-folds forming at the waist button"],
+  "durability_score": 0,
   "expert_verdict_bn": "৩-৫ লাইনের বাংলা মতামত",
   "expert_verdict_en": "3-5 line English verdict"
-}`;
+}
+`;
 }

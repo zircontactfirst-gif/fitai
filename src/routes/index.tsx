@@ -292,7 +292,7 @@ function HomePage() {
 
               <div>
                 <Label className="mb-2 flex items-center gap-2"><Camera className="h-4 w-4" /> Your photo (recommended)</Label>
-                <input ref={userFileRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleUserPhoto(e.target.files?.[0] ?? null)} />
+                <input ref={userFileRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleUserPhoto(e.target.files?.[0] ?? null)} />
                 {userPhotoUrl ? (
                   <div className="relative w-fit">
                     <img src={userPhotoUrl} alt="user" className="h-40 rounded-md border border-border object-cover" />

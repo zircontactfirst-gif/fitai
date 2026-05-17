@@ -60,8 +60,9 @@ export async function extractMeasurements(apiKey: string, photos: ProfilePhoto[]
     { text: `Estimate body measurements in inches. 
 User height: ${profile.height_ft}'${profile.height_in}". 
 CRITICAL CALIBRATION:
-1. HEIGHT-PROPORTIONAL BASELINE: Average shoulders are ~25% of height. Start from this baseline and adjust based on whether the user looks broader/narrower than average in the photo.
-2. REFERENCE OBJECT: Check if the user is holding a Credit Card (85.6mm wide) or A4 paper (210mm wide). If found, use its pixel-width to calculate exact mathematical measurements for the chest and shoulders.
+1. HEIGHT-PROPORTIONAL BASELINE: Average shoulders are ~25% of height. Head size is ~1/8 of height. Start from this baseline and adjust based on whether the user looks broader/narrower than average in the photo.
+2. LENS DISTORTION CORRECTION: Mobile phone cameras distort images (objects closer to the lens appear disproportionately larger). Compensate for this when estimating chest and waist.
+3. REFERENCE OBJECT: Look for a standard Credit Card (exactly 85.6mm / 3.37 inches wide) or A4 paper. If found, identify its pixel-width and use it to calculate exact mathematical measurements for the chest, shoulders, and waist. This is non-negotiable for high confidence.
 Return strict JSON with numeric values only matching: {\"chest_in\": number, \"shoulder_in\": number, \"waist_in\": number, \"hip_in\": number, \"torso_length_in\": number, \"arm_length_in\": number, \"neck_in\": number, \"thigh_in\": number, \"inseam_in\": number, \"height_estimate_in\": number, \"confidence\": \"low|medium|high\"}` }
   ];
   for (const ph of photos) {
@@ -103,10 +104,10 @@ export async function measureBody(
   };
 }
 
-export const PHOTO_GUIDE: { pose: ProfilePhoto["pose"]; title: string; tip: string }[] = [
-  { pose: "front", title: "Front view (A-Pose)", tip: "Stand straight, arms slightly lifted away from body (A-Pose). Hold a Credit Card against your chest for highest accuracy." },
-  { pose: "side", title: "Side view", tip: "Turn 90°. Arms relaxed. Helps with waist and posture." },
-  { pose: "back", title: "Back view (optional)", tip: "Helps with precise shoulder width measurement." },
+export const PHOTO_GUIDE: { pose: ProfilePhoto["pose"]; title: string; tip: string; imageUrl?: string }[] = [
+  { pose: "front", title: "Front view (A-Pose)", tip: "Stand straight, arms slightly lifted away from body (A-Pose). Hold a Credit Card against your chest for highest accuracy.", imageUrl: "/poses/front.png" },
+  { pose: "side", title: "Side view", tip: "Turn 90°. Arms relaxed. Helps with waist and posture.", imageUrl: "/poses/side.png" },
+  { pose: "back", title: "Back view (optional)", tip: "Helps with precise shoulder width measurement.", imageUrl: "/poses/back.png" },
 ];
 
 export const PHOTO_RULES = [

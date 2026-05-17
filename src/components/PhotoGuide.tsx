@@ -7,8 +7,12 @@ export function PhotoGuide() {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {PHOTO_GUIDE.map((p) => (
           <div key={p.pose} className="rounded-lg border border-border bg-card p-3">
-            <div className="mb-2 flex h-24 items-center justify-center rounded-md bg-muted">
-              <PoseIcon pose={p.pose} />
+            <div className="mb-2 flex h-24 items-center justify-center rounded-md bg-muted overflow-hidden">
+              {p.imageUrl ? (
+                <img src={p.imageUrl} alt={p.title} className="h-full w-full object-cover" />
+              ) : (
+                <PoseIcon pose={p.pose} />
+              )}
             </div>
             <p className="text-sm font-medium">{p.title}</p>
             <p className="mt-1 text-xs text-muted-foreground">{p.tip}</p>
