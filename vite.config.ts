@@ -10,7 +10,7 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 // The server entry (src/server.ts) uses the web-standard fetch() interface which is
 // compatible with both Cloudflare Workers and Vercel Edge Functions.
 export default defineConfig({
-  cloudflare: false,
+  cloudflare: true,
   tanstackStart: {
     server: { entry: "server" },
   },
